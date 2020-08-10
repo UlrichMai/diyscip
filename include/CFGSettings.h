@@ -26,6 +26,7 @@
 #define PWD_LEN_MAX             63
 #define UPDATE_LEN_MAX          2
 
+#include <EEPROM.h>
 
 class CFGSettings {
 
@@ -60,6 +61,7 @@ public:
     bool        isUpdateEnabled();
 
 private:
+    EEPROMClass EEPROM;
     uint16_t    nextEEPROMField(char* field, uint16_t max_len);
     const char* nextHTTPField(const char* data, char* field, uint16_t max_size);
     uint16_t    writeField(const char* field);

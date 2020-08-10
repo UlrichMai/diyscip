@@ -28,12 +28,12 @@
 
 #ifdef SSP_H
   #define MAX_PUBLISHER       11
-  #define MAX_SUBSCRIBER      6
+  #define MAX_SUBSCRIBER      7
 #endif
 
 #ifdef SJB_HS
   #define MAX_PUBLISHER       13
-  #define MAX_SUBSCRIBER      8
+  #define MAX_SUBSCRIBER      9
 #endif
 
 #define MQTT_HOSTNAME_MAX   HOST_LEN_MAX

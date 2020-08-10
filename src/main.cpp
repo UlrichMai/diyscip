@@ -28,6 +28,10 @@
 #ifdef OTA_ENABLED
   #include <ArduinoOTA.h>
 #endif
+#ifdef HOMEKIT
+  #include <arduino_homekit_server.h>
+  #include "HAPAccessory.h"
+#endif
 
 
 /******************************************************************/
@@ -58,7 +62,7 @@ void setup() {
 
   #ifdef OTA_ENABLED
   
-    //ArduinoOTA.setPassword("*****");
+    ArduinoOTA.setPassword("*****");
      
     ArduinoOTA.onStart([]() {
       DBG("OTA: Start [%d]", ArduinoOTA.getCommand());
@@ -130,11 +134,49 @@ void setup() {
 
     mqttClient->setSetupModeTrigger([]() -> bool { return controlPanel->isSetupModeTriggered(); });
 
+#ifdef HOMEKIT
+    mqttClient->addSubscriber("spa/homekit/reset",  [](bool v) -> bool {if (v) homekit_server_reset(); ESP.restart(); true; });
+
+    switch_power_on.getter = 
+      []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isPowerOn() == 0x01 ); }; 
+    switch_power_on.setter = 
+      [](const homekit_value_t v) -> void { controlPanel->setPowerOn(v.bool_value); switch_power_on.value = v; };
+
+    switch_pump_on.getter = 
+      []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isFilterOn() == 0x01 ); }; 
+    switch_pump_on.setter = 
+      [](const homekit_value_t v) -> void { controlPanel->setFilterOn(v.bool_value); switch_pump_on.value = v; };
+
+    thermostat_current_temperature.getter = 
+      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPP(controlPanel->getWaterTemperatureCelsius2() );  };
+
+    thermostat_target_temperature.getter = 
+      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPP(controlPanel->getDesiredTemperatureCelsius2() ); };
+    thermostat_target_temperature.setter = 
+      [](const homekit_value_t v) -> void { controlPanel->setDesiredTemperatureCelsius(v.float_value); thermostat_target_temperature.value = v; };
+
+    thermostat_current_heating_cooling_state.getter = //isHeating
+      []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( (controlPanel->isHeaterOn()    == 0x01
+                                                        && controlPanel->isHeatReached() != 0x01 ) ? 1 : 0 ); };
+
+    thermostat_target_heating_cooling_state.getter = 
+      []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( controlPanel->isHeaterOn() == 0x01 ? 1 : 0 ); };
+    thermostat_target_heating_cooling_state.setter =
+      [](const homekit_value_t v) -> void { controlPanel->setHeaterOn(v.uint8_value != 0); thermostat_target_heating_cooling_state.value = v; };
+
+    arduino_homekit_setup(&config);
+
+#endif
+
   } else {
     
     ledBuiltin.setMode(BLINK_3);
+#ifdef HOMEKIT
+    homekit_server_reset();
+#endif
   }
 }
+
 
 void loop() {
 
@@ -160,11 +202,22 @@ void loop() {
 
     if (wifiManager.isSTAConnected()) {
       mqttClient->loop();
+#ifdef HOMEKIT
+      arduino_homekit_loop();
+      homekit_notify_loop();
+      static uint32_t next_heap_millis = 0;
+      uint32_t time = millis();
+      if (time > next_heap_millis) {
+        DBG("heap: %d, sockets: %d",
+            ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
+        next_heap_millis = time + 5000;
+  }
+#endif
     }
 
   } else { // Wifi AP mode
     wifiManager.loop();
   }
 
-  delay(200);
+  delay(100);
 }

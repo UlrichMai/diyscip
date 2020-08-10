@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY;
  */ 
 
-#include <EEPROM.h>
+
 
 #include "CFGSettings.h"
 #include "Debug.h"
@@ -41,6 +41,7 @@
 #define DATA_ADDRESS            7
 
 CFGSettings::CFGSettings() {
+    EEPROM = EEPROMClass(0x3FB);
     EEPROM.begin(EEPROM_SIZE);
 
     for (int i=0; i<INIT_SEQUENCE_MAX; i++) {

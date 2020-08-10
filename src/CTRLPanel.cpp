@@ -194,7 +194,7 @@
   #define BUTTON_FILTER             U4 | COMMAND_ADDRESS_S1
   #define BUTTON_HEATER             U5 | COMMAND_ADDRESS_S7
   #define BUTTON_HOLD_PRESSED_MS    300
-  #define BUTTON_INTERVAL_MS        500
+  #define BUTTON_INTERVAL_MS        750
 #endif
 
 #ifdef PCB_DESIGN_3
@@ -208,7 +208,7 @@
   #define BUTTON_JET                7  
   #define BUTTON_CLEAN              8  
   
-  #define BUTTON_PUSH_CYCLES       15
+  #define BUTTON_PUSH_CYCLES       10
   #define BUTTON_INTERVAL_MS       1000
 #endif
 
@@ -239,9 +239,31 @@ uint16_t CTRLPanel::getWaterTemperatureCelsius() {
     convertDisplayToCelsius(waterTemp) : UNSET_VALUE;
 }
 
+uint16_t CTRLPanel::getWaterTemperatureCelsius2() {
+  return (waterTemp != UNSET_VALUE) ?
+    convertDisplayToCelsius(waterTemp) : 20;
+}
+
 uint16_t CTRLPanel::getDesiredTemperatureCelsius() {
   return (desiredTemp != UNSET_VALUE) ?
     convertDisplayToCelsius(desiredTemp) : UNSET_VALUE;
+}
+
+uint16_t CTRLPanel::getDesiredTemperatureCelsius2() {
+  uint16_t  t = getDesiredTemperatureCelsius();
+  if (t == UNSET_VALUE) {
+    if (isPowerOn()) {
+      pushButton(BUTTON_TEMPDOWN);
+      while (t == UNSET_VALUE) {
+        delay(200);
+        t = getDesiredTemperatureCelsius();
+      }
+    } else { 
+      t = getWaterTemperatureCelsius2();
+    }
+  }
+  return t;
+  
 }
 
 boolean CTRLPanel::hasError() {

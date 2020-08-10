@@ -29,7 +29,9 @@ class CTRLPanel {
     uint32_t  getFrameDropped();
 
     uint16_t  getWaterTemperatureCelsius();
+    uint16_t  getWaterTemperatureCelsius2();
     uint16_t  getDesiredTemperatureCelsius();
+    uint16_t  getDesiredTemperatureCelsius2();
 
     uint16_t  getRawStatus();
     
