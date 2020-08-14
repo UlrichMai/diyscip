@@ -14,12 +14,22 @@ It connects to your WiFi network and communicate to a MQTT server for control (M
 > :warning: **compatibility:** This project has been developed and test on model SSP-H20-1C only. I guess it should works with SSP-H-20-1 and SSP-H-20-2 because those models share the same control panel. For the others models, some minors software AND hardware modifications may be necessary. Feel free to contact me to share our experience and improve this project compatibility.
 
 ### How to build it ?
-There are several types of hardware implementations:
-1. single CD4051 
-2. dual CD4051
-3. no extra PCB hardware
+Depending on your hardware, the pool type and the protocol you need to edit `config.h` and choose PCB DESIGN, SPA MODEL and PROTOCOL.
 
-Depending on your hardware and the pool type you need to edit `config.h` and choose PCB DESIGN and SPA MODEL.
+You need to choose only one of the hardware implementation:
+1. `PCB_DESIGN_1` for single CD4051
+2. `PCB_DESIGN_2` for dual CD4051
+3. `PCB_DESIGN_3` for no extra PCB hardware
+
+You need to choose only one of the SPA pool model:
+1. `SSP_H` for type SSP-H-20-1/SSP-H-20-1C/SSP-H20-2
+2. `SJB_HS` for salt water pools SJB-HS-20-1G/SJB-HS-30-1G/SJB-HS-22-1G/SJB-HS-33-1G
+
+You need to choose atleast one of the protocols you like to support:
+1. `MQTT`
+2. `HOMEKIT` for Apple HomeKit
+
+
 
 #### 1. The original implementation (Single CD4051)
 ![image](docs/controller_1.jpg)
@@ -43,13 +53,17 @@ Don't feel comfortable with hardware manufacturing ? That's a Do It Yourself pro
 The mini version of 8266 is taped directly on the back of the display panel and wired to the connector on the display PCB.
 Please see [here](https://github.com/UlrichMai/MaiPureSpaController#hardware) for more information on this hardware setup.
 
-### Settings the controller
+### Configure wireless credentials and MQTT broker settings
 Here we are ! The controller is in the place. At first start up, you need to connect your mobile or computer to the WiFi network "DIYSCIP_setup", a configuration screen enable you to set your home WiFi network and password then setting the MQTT server you connect to. After a checking of you settings, the controller reboots and start to operate !
 
 To re-enter in setup mode, when your spa is powered on, press the temperature units change button 6 times quickly then switch off the spa (not electricaly but on control panel). The controller reboot and enter in setup mode.
 
 ![image](https://github.com/YorffoeG/diyscip/blob/master/docs/DIYSCIP_settings.jpg)
 
+### HomeKit pairing
+If you choose to use HomeKit, you need to connect you pool controller to you HomeKit environment. You can find more detailed instructions [here](https://github.com/UlrichMai/MaiPureSpaController#homekit-setup).
+
+![image](https://github.com/UlrichMai/MaiPureSpaController/blob/master/docs/homekit_screen.png)
 
 ### Middleware and Frontend PWA App
 I've also developped the middleware server and a frontend Progressive Web App for your spa ! For now it's not publicly open but email me if you want your controller to be registered in this app: _diyscip(AT)runrunweb.net_
@@ -80,6 +94,8 @@ The controller embedded MQTT client uses protocol v3.1.1.
 Publish Topics:
 - **spa/status** :  online | offline (Will topic)
 - **spa/state** : number - raw state value, a bit per control, for debug mainly.
+- **spa/sys/wifi** : number - wifi connection quality.
+- **spa/error** : number - spa error number, if any.
 - **spa/state/power**  :  true | false
 - **spa/state/filter** : true | false
 - **spa/state/heater** : true | false
@@ -94,3 +110,12 @@ Subscribe Topics:
 - **spa/state/filter/set** : true | false
 - **spa/state/heater/set** : true | false
 - **spa/state/temp/desired/set** : number - in Celsius degree
+
+Extra topics for SJB_HS model:
+- **spa/state/jet** : true | false
+- **spa/state/clean** : true | false
+- **spa/state/bubble/set** : true | false
+- **spa/state/jet/set** : true | false
+- **spa/state/clean/set** : true | false - start cleaning cycle
+
+
