@@ -1,6 +1,6 @@
 .pio
 .vscode/*
-html/home.htm.gz
+html/*.gz
 util/*
 *code-workspace
 

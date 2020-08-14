@@ -19,7 +19,11 @@
 #include "config.h"
 #include "Debug.h"
 
+#if (defined(HOMEKIT) && !defined(MQTT))
+#include "../html/home-hap.htm.h"
+#else
 #include "../html/home.htm.h"
+#endif
 
 #define DNS_PORT    53
 #define HTTP_PORT   80
@@ -303,6 +307,29 @@ void WIFIManager::checks() {
   }
 
   if (IS_CHECK_PENDING(_checkCode)) {
+#ifndef MQTT
+    if (_checkCode & CHECK_WIFI) {
+      wl_status_t wifiStatus = WiFi.status();
+      if (wifiStatus == WL_CONNECTED) {
+        _checkCode = CHECK_PENDING | CHECK_HOST;
+        _checkLoopCounter = 0;
+
+      } else if (wifiStatus == WL_CONNECT_FAILED) {
+        _checkCode = CHECK_ERROR | CHECK_WIFI;
+      }
+
+    } else if (_checkCode & CHECK_HOST) {
+          _checkCode = CHECK_PENDING | CHECK_TCP;
+          _checkLoopCounter = 0;
+
+    } else if (_checkCode & CHECK_TCP) {
+        _checkCode = CHECK_PENDING | CHECK_MQTT;
+        _checkLoopCounter = 0;
+
+    } else if (_checkCode & CHECK_MQTT) {
+        _checkCode &= ~CHECK_PENDING;
+    }
+#else
     if (_checkCode & CHECK_WIFI) {
       wl_status_t wifiStatus = WiFi.status();
 
@@ -375,6 +402,7 @@ void WIFIManager::checks() {
         _checkCode &= ~CHECK_PENDING;
       }
     }
+#endif
 
     _checkLoopCounter ++;
     if (_checkLoopCounter >= CHECK_PENDING_LOOP_MAX) {

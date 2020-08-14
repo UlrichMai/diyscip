@@ -91,7 +91,7 @@ void setup() {
 
   if (wifiManager.isSTA()) {
     ledBuiltin.setMode(BLINK_1);
-
+#ifdef MQTT
     mqttClient = new MQTTClient(cfgSettings);
     mqttClient->connect();
 
@@ -133,9 +133,11 @@ void setup() {
     }
 
     mqttClient->setSetupModeTrigger([]() -> bool { return controlPanel->isSetupModeTriggered(); });
-
+#endif
 #ifdef HOMEKIT
-    mqttClient->addSubscriber("spa/homekit/reset",  [](bool v) -> bool {if (v) homekit_server_reset(); ESP.restart(); true; });
+    ///mqttClient->addSubscriber("spa/homekit/reset",  [](bool v) -> bool {if (v) homekit_server_reset(); ESP.restart(); true; });
+
+    accessory_name.value = HOMEKIT_STRING_CPP( const_cast<char*>(cfgSettings.getDeviceID()) );
 
     switch_power_on.getter = 
       []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isPowerOn() == 0x01 ); }; 
@@ -198,23 +200,25 @@ void loop() {
 
   ledBuiltin.loop();
 
-  if (mqttClient != NULL) { // Wifi STA mode
-
-    if (wifiManager.isSTAConnected()) {
+  if (wifiManager.isSTAConnected()) { // Wifi STA mode
+#ifdef MQTT
+    if (mqttClient != NULL)  
       mqttClient->loop();
+#endif      
 #ifdef HOMEKIT
-      arduino_homekit_loop();
+    arduino_homekit_loop();
+    if (arduino_homekit_is_paired()) 
       homekit_notify_loop();
-      static uint32_t next_heap_millis = 0;
-      uint32_t time = millis();
-      if (time > next_heap_millis) {
-        DBG("heap: %d, sockets: %d",
-            ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
-        next_heap_millis = time + 5000;
-  }
-#endif
+  #ifndef NODEBUG      
+    static uint32_t next_heap_millis = 0;
+    uint32_t time = millis();
+    if (time > next_heap_millis) {
+      DBG("heap: %d, sockets: %d",
+          ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
+      next_heap_millis = time + 5000;
     }
-
+  #endif 
+#endif 
   } else { // Wifi AP mode
     wifiManager.loop();
   }
