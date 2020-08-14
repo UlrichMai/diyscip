@@ -252,7 +252,7 @@ uint16_t CTRLPanel::getDesiredTemperatureCelsius() {
 uint16_t CTRLPanel::getDesiredTemperatureCelsius2() {
   uint16_t  t = getDesiredTemperatureCelsius();
   if (t == UNSET_VALUE) {
-    if (isPowerOn()) {
+    if (isPowerOn()==UINT8_TRUE) {
       pushButton(BUTTON_TEMPDOWN);
       while (t == UNSET_VALUE) {
         delay(200);
@@ -332,7 +332,7 @@ uint8_t CTRLPanel::isHeatReached() {
 
 boolean CTRLPanel::setDesiredTemperatureCelsius(uint16_t temp) {
   if ((temp >= MIN_SET_DESIRED_TEMPERATURE) && (temp <= MAX_SET_DESIRED_TEMPERATURE)) {
-    if (isPowerOn()) {
+    if (isPowerOn()==UINT8_TRUE) {
       uint16_t  uint16DesiredTemp;
 
       while (getDesiredTemperatureCelsius() == UNSET_VALUE) {
