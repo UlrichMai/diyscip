@@ -15,6 +15,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#include <Arduino.h>
 #include "config.h"
 
 #ifndef DBG_SERIAL_ENABLED
