@@ -93,5 +93,9 @@
 #error "YOU MUST DEFINE ONE AND ONE SPA MODEL"
 #endif
 
+#if (!defined(SSP_H) && !defined(SJB_HS))
+#error "YOU MUST DEFINE ATLEAST ONE PROTOCOL"
+#endif
+
 
 #endif // CONFIG_H

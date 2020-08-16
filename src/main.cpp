@@ -133,11 +133,19 @@ void setup() {
     }
 
     mqttClient->setSetupModeTrigger([]() -> bool { return controlPanel->isSetupModeTriggered(); });
+  #ifdef HOMEKIT
+    mqttClient->addSubscriber("spa/homekit/reset",  [](bool v) -> bool {if (v) homekit_server_reset(); ESP.restart(); true; });
+  #endif
 #endif
 #ifdef HOMEKIT
-    ///mqttClient->addSubscriber("spa/homekit/reset",  [](bool v) -> bool {if (v) homekit_server_reset(); ESP.restart(); true; });
 
     accessory_name.value = HOMEKIT_STRING_CPP( const_cast<char*>(cfgSettings.getDeviceID()) );
+  #ifdef SSP_H
+    accessory_model.value = HOMEKIT_STRING_CPP( "SSP_H" );
+  #else
+    accessory_model.value = HOMEKIT_STRING_CPP( "SJB_HS" );
+  #endif
+    
 
     switch_power_on.getter = 
       []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isPowerOn() == 0x01 ); }; 
