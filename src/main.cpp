@@ -155,13 +155,13 @@ void setup() {
     switch_pump_on.getter = 
       []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isFilterOn() == 0x01 ); }; 
     switch_pump_on.setter = 
-      [](const homekit_value_t v) -> void { controlPanel->setFilterOn(v.bool_value); switch_pump_on.value = v; };
+      [](const homekit_value_t v) -> void { controlPanel->setFilterOnEx(v.bool_value); switch_pump_on.value = v; };
 
     thermostat_current_temperature.getter = 
-      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPP(controlPanel->getWaterTemperatureCelsius2() );  };
+      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPPX(controlPanel->getWaterTemperatureCelsius(),0.0,100.0 );  };
 
     thermostat_target_temperature.getter = 
-      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPP(controlPanel->getDesiredTemperatureCelsius2() ); };
+      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPPX(controlPanel->getDesiredTemperatureCelsiusEx(),20.0,40.0 ); };
     thermostat_target_temperature.setter = 
       [](const homekit_value_t v) -> void { controlPanel->setDesiredTemperatureCelsius(v.float_value); thermostat_target_temperature.value = v; };
 
@@ -172,7 +172,10 @@ void setup() {
     thermostat_target_heating_cooling_state.getter = 
       []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( controlPanel->isHeaterOn() == 0x01 ? 1 : 0 ); };
     thermostat_target_heating_cooling_state.setter =
-      [](const homekit_value_t v) -> void { controlPanel->setHeaterOn(v.uint8_value != 0); thermostat_target_heating_cooling_state.value = v; };
+      [](const homekit_value_t v) -> void { controlPanel->setHeaterOnEx(v.uint8_value != 0); thermostat_target_heating_cooling_state.value = v; };
+
+    board_temperature_sensor_temperature.getter = 
+      []() -> homekit_value_t { return HOMEKIT_FLOAT_CPPX(tempSensor->getAverageTemperatureCelsius(),0.0,100.0 ); };
 
     arduino_homekit_setup(&config);
 

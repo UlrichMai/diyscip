@@ -29,9 +29,8 @@ class CTRLPanel {
     uint32_t  getFrameDropped();
 
     uint16_t  getWaterTemperatureCelsius();
-    uint16_t  getWaterTemperatureCelsius2();
     uint16_t  getDesiredTemperatureCelsius();
-    uint16_t  getDesiredTemperatureCelsius2();
+    uint16_t  getDesiredTemperatureCelsiusEx();
 
     uint16_t  getRawStatus();
     
@@ -57,7 +56,9 @@ class CTRLPanel {
     bool      setDesiredTemperatureCelsius(uint16_t temp);
     bool      setPowerOn(bool v);
     bool      setFilterOn(bool v);
+    bool      setFilterOnEx(bool v);
     bool      setHeaterOn(bool v);
+    bool      setHeaterOnEx(bool v);
 
     bool      isSetupModeTriggered();
 

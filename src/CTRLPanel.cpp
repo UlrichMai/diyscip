@@ -239,17 +239,12 @@ uint16_t CTRLPanel::getWaterTemperatureCelsius() {
     convertDisplayToCelsius(waterTemp) : UNSET_VALUE;
 }
 
-uint16_t CTRLPanel::getWaterTemperatureCelsius2() {
-  return (waterTemp != UNSET_VALUE) ?
-    convertDisplayToCelsius(waterTemp) : 20;
-}
-
 uint16_t CTRLPanel::getDesiredTemperatureCelsius() {
   return (desiredTemp != UNSET_VALUE) ?
     convertDisplayToCelsius(desiredTemp) : UNSET_VALUE;
 }
 
-uint16_t CTRLPanel::getDesiredTemperatureCelsius2() {
+uint16_t CTRLPanel::getDesiredTemperatureCelsiusEx() {
   uint16_t  t = getDesiredTemperatureCelsius();
   if (t == UNSET_VALUE) {
     if (isPowerOn()==UINT8_TRUE) {
@@ -259,7 +254,7 @@ uint16_t CTRLPanel::getDesiredTemperatureCelsius2() {
         t = getDesiredTemperatureCelsius();
       }
     } else { 
-      t = getWaterTemperatureCelsius2();
+      t = getWaterTemperatureCelsius();
     }
   }
   return t;
@@ -371,8 +366,33 @@ boolean CTRLPanel::setFilterOn(bool v) {
   return true;
 }
 
+boolean CTRLPanel::setFilterOnEx(bool v) {
+          DBG("setFilterOnEx(%d),isFilterOn()=%d,isPowerOn()=%d",v,isFilterOn(),isPowerOn());
+  if (v ^ (isFilterOn() == UINT8_TRUE)) {
+    if (v && isPowerOn()!=UINT8_TRUE) {
+          DBG("v && isPowerOn()!=UINT8_TRUE");
+      setPowerOn(true);
+      delay(200);
+          DBG("setPowerOn(true)=%d",isPowerOn());
+    }
+    pushButton(BUTTON_FILTER);
+  }
+  return true;
+}
+
 boolean CTRLPanel::setHeaterOn(bool v) {
   if (v ^ (isHeaterOn() == UINT8_TRUE)) {
+    pushButton(BUTTON_HEATER);
+  }
+  return true;
+}
+
+boolean CTRLPanel::setHeaterOnEx(bool v) {
+  if (v ^ (isHeaterOn() == UINT8_TRUE)) {
+    if (v && isPowerOn()!=UINT8_TRUE) {
+      setPowerOn(true);
+      delay(200);
+    }    
     pushButton(BUTTON_HEATER);
   }
   return true;
