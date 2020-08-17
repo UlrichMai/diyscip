@@ -1,5 +1,6 @@
 #pragma once
 
+#include <homekit/types.h>
 #include <homekit/homekit.h>
 #include <homekit/characteristics.h>
 
@@ -30,5 +31,10 @@ EXPORT_C homekit_characteristic_t switch_power_on;                            //
 EXPORT_C homekit_characteristic_t switch_pump_name;
 EXPORT_C homekit_characteristic_t switch_pump_on;                             //.getter,.setter
 
+EXPORT_C homekit_characteristic_t board_temperature_sensor_name;
+EXPORT_C homekit_characteristic_t board_temperature_sensor_temperature;       //.getter
+
 EXPORT_C void homekit_notify_loop();
+
+EXPORT_C homekit_value_t HOMEKIT_FLOAT_CPPX(float value, float min_value, float max_value);
 

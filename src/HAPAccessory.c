@@ -18,7 +18,7 @@ homekit_characteristic_t accessory_name                           = HOMEKIT_CHAR
 homekit_characteristic_t accessory_manufacturer                   = HOMEKIT_CHARACTERISTIC_(MANUFACTURER, "Intex");
 homekit_characteristic_t accessory_serial_number                  = HOMEKIT_CHARACTERISTIC_(SERIAL_NUMBER, "SN_00000001");
 homekit_characteristic_t accessory_model                          = HOMEKIT_CHARACTERISTIC_(MODEL, "SSP_H");
-homekit_characteristic_t accessory_firmware_revision              = HOMEKIT_CHARACTERISTIC_(FIRMWARE_REVISION, "0.0.0");
+homekit_characteristic_t accessory_firmware_revision              = HOMEKIT_CHARACTERISTIC_(FIRMWARE_REVISION, "__DATE__");
 homekit_characteristic_t accessory_identify_cb                    = HOMEKIT_CHARACTERISTIC_(IDENTIFY, accessory_identify);
 
 homekit_characteristic_t thermostat_name                          = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Heizung");
@@ -32,6 +32,9 @@ homekit_characteristic_t switch_power_name                        = HOMEKIT_CHAR
 homekit_characteristic_t switch_power_on                          = HOMEKIT_CHARACTERISTIC_(ON, false, .getter=NULL, .setter=NULL );
 homekit_characteristic_t switch_pump_name                         = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Pumpe");
 homekit_characteristic_t switch_pump_on                           = HOMEKIT_CHARACTERISTIC_(ON, false, .getter=NULL, .setter=NULL );
+
+homekit_characteristic_t board_temperature_sensor_name            = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Luft Temperatur");
+homekit_characteristic_t board_temperature_sensor_temperature     = HOMEKIT_CHARACTERISTIC_(CURRENT_TEMPERATURE, 20.0, .min_step  = (float[]) {1.0},  .getter=NULL );
 
 homekit_accessory_t *accessories[] =
 		{
@@ -75,6 +78,13 @@ homekit_accessory_t *accessories[] =
                   NULL
                 }),
               
+              HOMEKIT_SERVICE(TEMPERATURE_SENSOR, .primary=false,
+                .characteristics=(homekit_characteristic_t*[]){
+                  &board_temperature_sensor_name,
+                  &board_temperature_sensor_temperature,
+                  NULL
+                }),
+              
 							NULL
 						}),
 				NULL
@@ -87,7 +97,7 @@ homekit_server_config_t config = {
 		.setupId = "ABCD"
 };
 
-static homekit_value_t old_value[6];
+static homekit_value_t old_value[7];
 static homekit_value_t new_value;
 
 #define NOTIFY_WHEN_CHANGED(no,cha) \
@@ -105,4 +115,13 @@ void homekit_notify_loop() {
   NOTIFY_WHEN_CHANGED(3,thermostat_target_temperature);
   NOTIFY_WHEN_CHANGED(4,thermostat_current_heating_cooling_state);
   NOTIFY_WHEN_CHANGED(5,thermostat_target_heating_cooling_state);
+  NOTIFY_WHEN_CHANGED(6,board_temperature_sensor_temperature);
+}
+
+homekit_value_t HOMEKIT_FLOAT_CPPX(float value, float min_value, float max_value) {
+	homekit_value_t homekit_value;
+  homekit_value.is_null = false;
+	homekit_value.format = homekit_format_float;
+	homekit_value.float_value = (value < min_value ? min_value: (value > max_value ? max_value : value) );
+	return homekit_value;
 }
