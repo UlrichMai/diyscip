@@ -61,8 +61,7 @@ void setup() {
   wifiManager.setup();
 
   #ifdef OTA_ENABLED
-  
-    ArduinoOTA.setPassword("*****");
+    ArduinoOTA.setPassword(PASSWORD_OTA);
      
     ArduinoOTA.onStart([]() {
       DBG("OTA: Start [%d]", ArduinoOTA.getCommand());
@@ -134,7 +133,15 @@ void setup() {
 
     mqttClient->setSetupModeTrigger([]() -> bool { return controlPanel->isSetupModeTriggered(); });
   #ifdef HOMEKIT
-    mqttClient->addSubscriber("spa/homekit/reset",  [](bool v) -> bool {if (v) homekit_server_reset(); ESP.restart(); true; });
+    mqttClient->addSubscriber("spa/reset",  [](uint16_t v) -> bool 
+    {
+      switch(v) {
+        case 1: ESP.restart(); break;
+        case 2: cfgSettings.enterMode(CFGSettings::SETUP); break;
+        case 3: homekit_server_reset(); ESP.restart(); break;
+      } 
+    return true;
+    });
   #endif
 #endif
 #ifdef HOMEKIT

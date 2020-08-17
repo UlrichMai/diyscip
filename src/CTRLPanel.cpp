@@ -367,15 +367,13 @@ boolean CTRLPanel::setFilterOn(bool v) {
 }
 
 boolean CTRLPanel::setFilterOnEx(bool v) {
-          DBG("setFilterOnEx(%d),isFilterOn()=%d,isPowerOn()=%d",v,isFilterOn(),isPowerOn());
   if (v ^ (isFilterOn() == UINT8_TRUE)) {
     if (v && isPowerOn()!=UINT8_TRUE) {
-          DBG("v && isPowerOn()!=UINT8_TRUE");
       setPowerOn(true);
       delay(200);
-          DBG("setPowerOn(true)=%d",isPowerOn());
     }
     pushButton(BUTTON_FILTER);
+   // DBG("pushButton(BUTTON_FILTER)");
   }
   return true;
 }
@@ -388,12 +386,14 @@ boolean CTRLPanel::setHeaterOn(bool v) {
 }
 
 boolean CTRLPanel::setHeaterOnEx(bool v) {
+  //  DBG("setHeaterOnEx(%d),isHeaterOn=%d,isPowerOn=%d",v,isHeaterOn(),isPowerOn());
   if (v ^ (isHeaterOn() == UINT8_TRUE)) {
     if (v && isPowerOn()!=UINT8_TRUE) {
       setPowerOn(true);
       delay(200);
     }    
     pushButton(BUTTON_HEATER);
+  //  DBG("pushButton(BUTTON_HEATER)");
   }
   return true;
 }
