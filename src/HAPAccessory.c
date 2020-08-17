@@ -28,8 +28,6 @@ homekit_characteristic_t thermostat_current_heating_cooling_state = HOMEKIT_CHAR
 homekit_characteristic_t thermostat_target_heating_cooling_state  = HOMEKIT_CHARACTERISTIC_(TARGET_HEATING_COOLING_STATE,  0, .valid_values = {.count = 2, .values = (uint8_t[]) {0,1} }, .getter=NULL, .setter=NULL  );
 homekit_characteristic_t thermostat_temperature_display_units     = HOMEKIT_CHARACTERISTIC_(TEMPERATURE_DISPLAY_UNITS, 0); //Celsius
 
-homekit_characteristic_t switch_power_name                        = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Power");
-homekit_characteristic_t switch_power_on                          = HOMEKIT_CHARACTERISTIC_(ON, false, .getter=NULL, .setter=NULL );
 homekit_characteristic_t switch_pump_name                         = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Pumpe");
 homekit_characteristic_t switch_pump_on                           = HOMEKIT_CHARACTERISTIC_(ON, false, .getter=NULL, .setter=NULL );
 
@@ -63,14 +61,7 @@ homekit_accessory_t *accessories[] =
                   &thermostat_temperature_display_units,
                   NULL
                 }),
-              
-              HOMEKIT_SERVICE(SWITCH, .primary=false,
-                .characteristics=(homekit_characteristic_t*[]){
-                  &switch_power_name,
-                  &switch_power_on,
-                  NULL
-                }),
-              
+
               HOMEKIT_SERVICE(SWITCH, .primary=false,
                 .characteristics=(homekit_characteristic_t*[]){
                   &switch_pump_name,
@@ -109,7 +100,6 @@ static homekit_value_t new_value;
   }  
 
 void homekit_notify_loop() {
-  NOTIFY_WHEN_CHANGED(0,switch_power_on);
   NOTIFY_WHEN_CHANGED(1,switch_pump_on);
   NOTIFY_WHEN_CHANGED(2,thermostat_current_temperature);
   NOTIFY_WHEN_CHANGED(3,thermostat_target_temperature);

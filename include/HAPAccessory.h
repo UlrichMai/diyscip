@@ -26,8 +26,6 @@ EXPORT_C homekit_characteristic_t thermostat_current_heating_cooling_state;   //
 EXPORT_C homekit_characteristic_t thermostat_target_heating_cooling_state;    //.getter,.setter
 EXPORT_C homekit_characteristic_t thermostat_temperature_display_units;
 
-EXPORT_C homekit_characteristic_t switch_power_name;
-EXPORT_C homekit_characteristic_t switch_power_on;                            //.getter,.setter
 EXPORT_C homekit_characteristic_t switch_pump_name;
 EXPORT_C homekit_characteristic_t switch_pump_on;                             //.getter,.setter
 

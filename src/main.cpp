@@ -147,11 +147,6 @@ void setup() {
   #endif
     
 
-    switch_power_on.getter = 
-      []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isPowerOn() == 0x01 ); }; 
-    switch_power_on.setter = 
-      [](const homekit_value_t v) -> void { controlPanel->setPowerOn(v.bool_value); switch_power_on.value = v; };
-
     switch_pump_on.getter = 
       []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isFilterOn() == 0x01 ); }; 
     switch_pump_on.setter = 
