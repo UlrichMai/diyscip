@@ -68,14 +68,14 @@ homekit_accessory_t *accessories[] =
                   &switch_pump_on,
                   NULL
                 }),
-              
+#ifdef PCB_OPTIONS_TEMP_SENSOR
               HOMEKIT_SERVICE(TEMPERATURE_SENSOR, .primary=false,
                 .characteristics=(homekit_characteristic_t*[]){
                   &board_temperature_sensor_name,
                   &board_temperature_sensor_temperature,
                   NULL
                 }),
-              
+#endif
 							NULL
 						}),
 				NULL
@@ -105,7 +105,9 @@ void homekit_notify_loop() {
   NOTIFY_WHEN_CHANGED(3,thermostat_target_temperature);
   NOTIFY_WHEN_CHANGED(4,thermostat_current_heating_cooling_state);
   NOTIFY_WHEN_CHANGED(5,thermostat_target_heating_cooling_state);
+  #ifdef PCB_OPTIONS_TEMP_SENSOR
   NOTIFY_WHEN_CHANGED(6,board_temperature_sensor_temperature);
+  #endif
 }
 
 homekit_value_t HOMEKIT_FLOAT_CPPX(float value, float min_value, float max_value) {

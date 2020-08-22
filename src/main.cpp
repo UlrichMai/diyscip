@@ -40,8 +40,9 @@ LEDManager    ledBuiltin(LED_BUILTIN);
 WIFIManager   wifiManager(cfgSettings);
 
 CTRLPanel*    controlPanel  = CTRLPanel::getInstance();
+#ifdef PCB_OPTIONS_TEMP_SENSOR
 TEMPSensor*   tempSensor    = TEMPSensor::getInstance();
-
+#endif
 MQTTClient*   mqttClient    = NULL;
 
 
@@ -97,7 +98,9 @@ void setup() {
     mqttClient->addPublisher("spa/sys/wifi",           []() -> uint16_t { return WIFIManager::getWifiQuality(); });
     mqttClient->setLastAddedPublisherUpdateInterval(WIFIQUALITY_UPDATE_INTERVAL);
 
+    #ifdef PCB_OPTIONS_TEMP_SENSOR
     mqttClient->addPublisher("spa/temp/board",         []() -> uint16_t { return tempSensor->getAverageTemperatureCelsius(); });
+    #endif
     mqttClient->setLastAddedPublisherUpdateInterval(TEMP_UPDATE_INTERVAL);
 
     mqttClient->addPublisher("spa/error",              []() -> uint16_t { return controlPanel->getError(); });
@@ -175,10 +178,10 @@ void setup() {
       []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( controlPanel->isHeaterOn() == 0x01 ? 1 : 0 ); };
     thermostat_target_heating_cooling_state.setter =
       [](const homekit_value_t v) -> void { controlPanel->setHeaterOnEx(v.uint8_value != 0); thermostat_target_heating_cooling_state.value = v; };
-
+#ifdef PCB_OPTIONS_TEMP_SENSOR
     board_temperature_sensor_temperature.getter = 
       []() -> homekit_value_t { return HOMEKIT_FLOAT_CPPX(tempSensor->getAverageTemperatureCelsius(),0.0,100.0 ); };
-
+#endif
     arduino_homekit_setup(&config);
 
 #endif
