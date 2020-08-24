@@ -1,9 +1,10 @@
 #pragma once
 
-#include "config.h"
 #include <homekit/types.h>
 #include <homekit/homekit.h>
 #include <homekit/characteristics.h>
+#include "version.h"
+#include "config.h"
 
 #ifdef __cplusplus
     #define EXPORT_C extern "C"

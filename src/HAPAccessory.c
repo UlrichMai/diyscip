@@ -17,8 +17,12 @@ void accessory_identify(homekit_value_t _value) {
 homekit_characteristic_t accessory_name                           = HOMEKIT_CHARACTERISTIC_(NAME, "Pool");
 homekit_characteristic_t accessory_manufacturer                   = HOMEKIT_CHARACTERISTIC_(MANUFACTURER, "Intex");
 homekit_characteristic_t accessory_serial_number                  = HOMEKIT_CHARACTERISTIC_(SERIAL_NUMBER, "SN_00000001");
+#ifdef SSP_H
 homekit_characteristic_t accessory_model                          = HOMEKIT_CHARACTERISTIC_(MODEL, "SSP_H");
-homekit_characteristic_t accessory_firmware_revision              = HOMEKIT_CHARACTERISTIC_(FIRMWARE_REVISION, "__DATE__");
+#elif SJB_HS
+homekit_characteristic_t accessory_model                          = HOMEKIT_CHARACTERISTIC_(MODEL, "SJB_HS");
+#endif
+homekit_characteristic_t accessory_firmware_revision              = HOMEKIT_CHARACTERISTIC_(FIRMWARE_REVISION, FW_VERSION);
 homekit_characteristic_t accessory_identify_cb                    = HOMEKIT_CHARACTERISTIC_(IDENTIFY, accessory_identify);
 
 homekit_characteristic_t thermostat_name                          = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Heizung");
