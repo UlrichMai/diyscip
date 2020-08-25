@@ -124,6 +124,7 @@ void setup() {
 
     mqttClient->addPublisher("spa/state/heatreached",  []() -> uint8_t  { return controlPanel->isHeatReached(); });
     mqttClient->addPublisher("spa/state",              []() -> uint16_t { return controlPanel->getRawStatus(); });
+    mqttClient->addPublisher("spa/sys/powerconsumption",[]() -> uint16_t { return controlPanel->getPowerConsumption(); });
 
     mqttClient->addSubscriber("spa/temp/desired/set",  [](uint16_t v) -> bool { return controlPanel->setDesiredTemperatureCelsius(v); });
     mqttClient->addSubscriber("spa/state/power/set",   [](bool v) -> bool { return controlPanel->setPowerOn(v); });
@@ -155,7 +156,6 @@ void setup() {
   #else
     accessory_model.value = HOMEKIT_STRING_CPP( "SJB_HS" );
   #endif
-    
 
     switch_pump_on.getter = 
       []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isFilterOn() == 0x01 ); }; 
@@ -195,8 +195,11 @@ void setup() {
   }
 }
 
+int i = 0;
+char buf[50];
 
 void loop() {
+
 
   #ifdef OTA_ENABLED
     ArduinoOTA.handle();
@@ -232,6 +235,10 @@ void loop() {
       DBG("heap: %d, sockets: %d",
           ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
       next_heap_millis = time + 5000;
+      i++;
+      sprintf(buf,"XXX %d",i );
+    power_sensor_name.value = HOMEKIT_STRING_CPP( buf );
+    power_sensor_temperature.value = HOMEKIT_FLOAT_CPPX(i,0.0,100.0);
     }
   #endif 
 #endif 

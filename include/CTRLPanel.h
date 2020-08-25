@@ -61,6 +61,7 @@ class CTRLPanel {
     bool      setHeaterOnEx(bool v);
 
     bool      isSetupModeTriggered();
+    uint16_t  getPowerConsumption();
 
   private:
     static CTRLPanel*   instance;

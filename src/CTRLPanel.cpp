@@ -403,6 +403,17 @@ boolean CTRLPanel::isSetupModeTriggered() {
          (isPowerOn() == UINT8_FALSE);
 }
 
+uint16_t  CTRLPanel::getPowerConsumption() {
+  uint16_t p = 2;   //2 watt standby
+  if (isFilterOn()==UINT8_TRUE) p += 47; 
+  if (isBubbleOn()==UINT8_TRUE) p += 800; 
+  if (isHeaterOn()==UINT8_TRUE && !isHeatReached()==UINT8_TRUE ) p += 2050; 
+#ifdef SJB_HS
+  if (isJetOn()==UINT8_TRUE) p += ??; 
+  if (isCleanOn()==UINT8_TRUE) p += ??; 
+#endif    
+  return p;  
+}
 /***** PRIVATE *******************************************************************************/
 CTRLPanel* CTRLPanel::instance   = NULL;
     

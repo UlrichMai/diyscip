@@ -34,6 +34,9 @@ homekit_characteristic_t switch_pump_on                           = HOMEKIT_CHAR
 homekit_characteristic_t board_temperature_sensor_name            = HOMEKIT_CHARACTERISTIC_(NAME, "Pool Luft Temperatur");
 homekit_characteristic_t board_temperature_sensor_temperature     = HOMEKIT_CHARACTERISTIC_(CURRENT_TEMPERATURE, 20.0, .min_step  = (float[]) {1.0},  .getter=NULL );
 
+homekit_characteristic_t power_sensor_name            = HOMEKIT_CHARACTERISTIC_(NAME, "Stromverbrauch");
+homekit_characteristic_t power_sensor_temperature     = HOMEKIT_CHARACTERISTIC_(CURRENT_TEMPERATURE, 20.0, .min_step  = (float[]) {1.0},  .getter=NULL );
+
 homekit_accessory_t *accessories[] =
 		{
 				HOMEKIT_ACCESSORY(
@@ -76,6 +79,12 @@ homekit_accessory_t *accessories[] =
                   NULL
                 }),
 #endif
+              HOMEKIT_SERVICE(TEMPERATURE_SENSOR, .primary=false,
+                .characteristics=(homekit_characteristic_t*[]){
+                  &power_sensor_name,
+                  &power_sensor_temperature,
+                  NULL
+                }),
 							NULL
 						}),
 				NULL
