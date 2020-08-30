@@ -12,7 +12,7 @@
 #define PCB_DESIGN_3 
 
 /* PCB OPTIONS */
-//#define PCB_OPTIONS_TEMP_SENSOR
+#define PCB_OPTIONS_TEMP_SENSOR
 
 /* SPA MODEL    */
 #define SSP_H       // SSP-H-20-1/SSP-H-20-1C/SSP-H20-2
@@ -22,6 +22,11 @@
 #define MQTT
 #define HOMEKIT
 
+/* Automation    */
+/* power off, when idle for 10min */
+#define AUTOMATION_POWER_OFF_IDLE 600000
+/* stop filter after 2h, if nothing else is running */
+#define AUTOMATION_FILTER_OFF 7200000
 
 #define DBG_TCP_PORT        8888
 #define SERIAL_DEBUG_SPEED  115200  

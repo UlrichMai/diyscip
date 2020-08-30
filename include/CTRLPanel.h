@@ -20,6 +20,29 @@
 
 #include "config.h"
 
+#define FRAME_LED                 0x4000
+#define FRAME_LED_POWER           0x0001
+#define FRAME_LED_FILTER          0x1000
+#define FRAME_LED_HEATER          0x0080
+#define FRAME_LED_HEATREACHED     0x0200
+
+#ifdef SSP_H
+  #define FRAME_LED_BUBBLE          0x0400
+#endif
+
+#ifdef SJB_HS
+  #define FRAME_LED_BUBBLE          0x0002
+  #define FRAME_LED_JET             0x0400
+  #define FRAME_LED_CLEAN           0x2000
+  //U2-Q7 LED Clean Red = 0x8000, U2-Q5 LED Clean Green = 0x2000
+#endif
+
+#define UINT8_TRUE                0x01
+#define UINT8_FALSE               0x00
+
+#define UNSET_VALUE               0xFFFF
+#define UNSET_VALUEUINT8          0xFF
+
 class CTRLPanel {
   
   public:

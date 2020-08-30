@@ -24,6 +24,7 @@
 #include "OTAUpdate.h"
 #include "Debug.h"
 #include "config.h"
+#include "Automation.h"
 
 #ifdef OTA_ENABLED
   #include <ArduinoOTA.h>
@@ -158,7 +159,7 @@ void setup() {
     
 
     switch_pump_on.getter = 
-      []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isFilterOn() == 0x01 ); }; 
+      []() -> homekit_value_t { return HOMEKIT_BOOL_CPP( controlPanel->isFilterOn() == UINT8_TRUE ); }; 
     switch_pump_on.setter = 
       [](const homekit_value_t v) -> void { controlPanel->setFilterOnEx(v.bool_value); switch_pump_on.value = v; };
 
@@ -171,11 +172,11 @@ void setup() {
       [](const homekit_value_t v) -> void { controlPanel->setDesiredTemperatureCelsius(v.float_value); thermostat_target_temperature.value = v; };
 
     thermostat_current_heating_cooling_state.getter = //isHeating
-      []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( (controlPanel->isHeaterOn()    == 0x01
-                                                        && controlPanel->isHeatReached() != 0x01 ) ? 1 : 0 ); };
+      []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( (controlPanel->isHeaterOn()    == UINT8_TRUE
+                                                        && controlPanel->isHeatReached() != UINT8_TRUE ) ? 1 : 0 ); };
 
     thermostat_target_heating_cooling_state.getter = 
-      []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( controlPanel->isHeaterOn() == 0x01 ? 1 : 0 ); };
+      []() -> homekit_value_t { return HOMEKIT_UINT8_CPP( controlPanel->isHeaterOn() == UINT8_TRUE ? 1 : 0 ); };
     thermostat_target_heating_cooling_state.setter =
       [](const homekit_value_t v) -> void { controlPanel->setHeaterOnEx(v.uint8_value != 0); thermostat_target_heating_cooling_state.value = v; };
 #ifdef PCB_OPTIONS_TEMP_SENSOR
@@ -235,6 +236,8 @@ void loop() {
     }
   #endif 
 #endif 
+    Automation_loop(controlPanel);
+
   } else { // Wifi AP mode
     wifiManager.loop();
   }
