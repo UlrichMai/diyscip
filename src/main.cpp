@@ -236,9 +236,10 @@ void loop() {
           ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
       next_heap_millis = time + 5000;
       i++;
-      sprintf(buf,"XXX %d",i );
+      sprintf(buf,"Verbrauch %d kWh",i );
     power_sensor_name.value = HOMEKIT_STRING_CPP( buf );
     power_sensor_temperature.value = HOMEKIT_FLOAT_CPPX(i,0.0,100.0);
+    homekit_characteristic_notify(&power_sensor_temperature,power_sensor_temperature.value); 
     }
   #endif 
 #endif 

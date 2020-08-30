@@ -27,7 +27,7 @@
 #include "config.h"
 
 #ifdef SSP_H
-  #define MAX_PUBLISHER       11
+  #define MAX_PUBLISHER       12
   #define MAX_SUBSCRIBER      7
 #endif
 
